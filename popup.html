@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" href="lib/fontawesome/css/fontawesome.min.css">
+</head>
+<body style="min-width: 350px;">
+	<div style="width: 100%; text-align: center; background-color: #082E44; padding: 2rem 0; margin-bottom: .5rem">
+		<Image src="/images/logo_sm_white.png" style="width: 70%;"/>
+	</div>
+	<div class="p-4">
+		<div id="div_loading" class="text-center">
+			<p>Loading</p>
+			<div class="spinner-border" role="status">
+				<span class="sr-only">Loading...</span>
+			</div>
+		</div>
+
+		<div id="div_user_logout" class="alert alert-danger d-none" role="alert">
+			To start the system log in to the broker
+		</div>
+
+		<div id="form_login" class="d-none">
+			<form>
+				<div class="form-group">
+					<label for="email">Email address</label>
+					<input type="email" class="form-control" id="email" aria-describedby="emailHelp">
+				</div>
+				<div class="form-group">
+					<label for="password">Password</label>
+					<input type="password" class="form-control" id="password">
+				</div>
+
+				<p><strong class="text-warning">IMPORTANT!! </strong>If this is your first login to the system, the broker account that is active will be related to your data</p>
+
+				<button id="btn_submit_login" type="button" class="btn btn-primary btn-block">Submit</button>
+
+				<button id="btn_loading" class="btn btn-primary btn-block d-none" type="button" disabled>
+					<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+					Loading...
+				</button>
+			</form>
+		</div>
+
+		<div id="options" class="d-none">
+			<form>
+				<div class="row pl-3">
+					<div class="form-group form-check col-12">
+						<input type="checkbox" class="form-check-input" id="practice_account">
+						<label class="form-check-label" for="practice_account">Run trades on practice account</label>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="form-group col-6">
+						<label for="amount">Amount <i class="fas fa-info-circle text-info" data-toggle="tooltip" title="Minimum value with which entries can be made. It is recommended that it be 1% of your capital." data-placement="bottom"></i></label>
+						<input type="number" class="form-control" id="amount">
+					</div>
+					<div class="form-group col-6">
+						<label for="max_amount">Max. amount <i class="fas fa-info-circle text-info" data-toggle="tooltip" title="Maximum value with which entries can be made. If the increase in the amount is allowed, this value will be calculated automatically, otherwise it will be equal to the minimum entry value." data-placement="bottom"></i></label>
+						<input type="number" class="form-control" id="max_amount" disabled>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="form-group col-12">
+						<label for="stop_loss">Stop loss (optional) <i class="fas fa-info-circle text-info" data-toggle="tooltip" title="Maximum value that you are willing to lose. It is recommended that it be 3% to 5% of your capital." data-placement="bottom"></i></label>
+						<input type="number" class="form-control" id="stop_loss">
+					</div>
+				</div>
+
+				<div class="row pl-3">
+					<div class="form-group form-check col-12">
+						<input type="checkbox" class="form-check-input" id="stop_loss_dynamically">
+						<label class="form-check-label" for="stop_loss_dynamically">Stop loss dynamically (optional) <i class="fas fa-info-circle text-info" data-toggle="tooltip" title="If checked, your stop loss will move as your earnings increase, thus ensuring a balance in favor when your earnings are greater than the value of the stop loss." data-placement="bottom"></i></label>
+					</div>
+				</div>
+
+				<div class="row pl-3">
+					<div class="form-group form-check col-12">
+						<input type="checkbox" class="form-check-input" id="allow_increase_amount">
+						<label class="form-check-label" for="allow_increase_amount">Allow increase amount (optional) <i class="fas fa-info-circle text-info" data-toggle="tooltip" title="If checked, when there is a greater chance of getting an option right, the amount will increase." data-placement="bottom"></i></label>
+					</div>
+				</div>
+
+			</form>
+
+			<button class="btn btn-block btn-success" id="btn_start_trading">Start Trading</button>
+
+			<button class="btn btn-danger btn-block mt-3" id="btn_logout">Logout</button>
+		</div>
+
+		<div id="trading" class="d-none">
+			<div class="row">
+				<div class="col-6 pt-3" style="border-right: 1px solid #ededed;">
+					<div class="text-center">				
+						<div class="spinner-grow text-success" role="status">
+							<span class="sr-only">Loading...</span>
+						</div>
+						<p style="color: #ccc;">Waiting for options</p>
+					</div>
+				</div>
+
+				<div class="col-6 text-center">
+					<h1 class="text-success" id="current_earnings">$ 0</h1>
+					<p>Current earnings</p>
+				</div>
+			</div>
+
+			<div class="row mt-4 p-2 ml-1 mr-1" style="background-color: #f8f7f7;">
+				<div class="col-3 text-center" style="border-right: 1px solid #ededed;" data-toggle="tooltip" title="Amount" data-placement="bottom">
+					<i class="far fa-play-circle text-primary"></i> 
+					<h5>
+						<span class="badge badge-primary" id="info_amount">$ 1</span>
+					</h5>
+				</div>
+				<div class="col-3 text-center" style="border-right: 1px solid #ededed;" data-toggle="tooltip" title="Max. amount" data-placement="bottom">
+					<i class="fas fa-plus text-info"></i>
+					<i class="far fa-play-circle text-info"></i> 
+					<h5>
+						<span class="badge badge-info" id="info_max_amount">$ 1</span>
+					</h5>
+				</div>
+				<div class="col-3 text-center" style="border-right: 1px solid #ededed;" data-toggle="tooltip" title="Stop loss" data-placement="bottom">
+					<i class="far fa-stop-circle text-danger" id="info_stop_loss_icon"></i> 
+					<h5>
+						<span class="badge badge-danger" id="info_stop_loss"></span>
+					</h5>
+				</div>
+				<div class="col-3 text-center" data-toggle="tooltip" title="Number of open options" data-placement="bottom">
+					<i class="fas fa-bolt" id="open_options_icon"></i> 
+					<h5>
+						<span class="badge badge-secondary" id="open_options">0</span>
+					</h5>
+				</div>
+			</div>
+
+			<button class="btn btn-block btn-danger mt-3" id="btn_stop_trading">Stop Trading</button>
+		</div>
+	</div>
+
+	<script src="lib/jquery.min.js"></script>
+	<script src="lib/popper.min.js"></script>
+	<script src="lib/bootstrap/dist/js/bootstrap.min.js"></script>
+	<script src="lib/fontawesome/js/all.min.js" data-auto-replace-svg="nest"></script>
+	<script src="lib/fontawesome/js/fontawesome.min.js"></script>
+	<script src="scripts/start_jquery.js"></script>
+	<script src="scripts/popup.js"></script>
+	<script src="scripts/popup/auth.js"></script>
+	<script src="scripts/popup/options.js"></script>
+	<script src="scripts/popup/trading.js"></script>
+</body>
+</html>
